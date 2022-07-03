@@ -64,7 +64,7 @@ module.exports = {
       method: 'get',
       requires: 'smartyellow/species/seeAllSpecies',
       handler: async (req, res, user) => {
-        const q = server.storage({ user }).store('species').find().sort({ 'log.created.on': -1 });
+        const q = server.storage({ user }).store('smartyellow/species').find().sort({ 'log.created.on': -1 });
         const result = await (req.headers['format'] == 'object' ? q.toObject() : q.toArray());
         res.json(result);
       },
@@ -86,7 +86,7 @@ module.exports = {
       method: 'get',
       requires: 'smartyellow/species/seeAllSpecies',
       handler: async (req, res, user) => {
-        const doc = await server.storage({ user }).store('species').get(req.params[0]);
+        const doc = await server.storage({ user }).store('smartyellow/species').get(req.params[0]);
         if (!doc) {
           res.error(404);
           return;
@@ -169,10 +169,10 @@ module.exports = {
       requires: 'smartyellow/species/deleteSpecies',
       handler: async (req, res, user) => {
         // Check if user is allowed to see species to be deleted
-        const species = await server.storage({ user }).store('species').find().toObject();
+        const species = await server.storage({ user }).store('smartyellow/species').find().toObject();
         if (species[req.params[0]]) {
           // User is allowed to see the species to be deleted, continue
-          await server.storage({ user }).store('species').delete({ id: req.params[0] });
+          await server.storage({ user }).store('smartyellow/species').delete({ id: req.params[0] });
           // broadcast reload trigger
           server.publish('cms', 'smartyellow/species/reload');
         }
@@ -218,7 +218,7 @@ module.exports = {
           user: user,
         });
         const storageQuery = server.storage({ user }).prepareQuery(filters, query, req.body.languages || false);
-        const find = server.storage({ user }).store('species').find(storageQuery);
+        const find = server.storage({ user }).store('smartyellow/species').find(storageQuery);
         const result = await (req.headers['format'] == 'object' ? find.toObject() : find.toArray());
         res.json(result);
       },
